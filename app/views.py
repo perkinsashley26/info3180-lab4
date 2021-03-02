@@ -62,13 +62,32 @@ def login():
             return redirect(url_for('upload'))
     return render_template('login.html', error=error)
 
-
 @app.route('/logout')
 def logout():
     session.pop('logged_in', None)
     flash('You were logged out', 'success')
     return redirect(url_for('home'))
 
+@app.route('/files')
+def files():
+    if not session.get('logged_in'):
+        abort(401)
+    filenamelist=get_upload_images()
+    return render_template('files.html',filesname=filenamelist)
+
+def get_upload_images():
+    filenamelist=[]
+    for subdir, dirs,files in os.walk(app.config['UPLOAD_FOLDER']):
+        for file in files:
+            descr,extension= os.path.splitext(file)
+            if extension in ['.jpeg','.png','.jpg']:
+                filenamelist.append(file)
+    return filenamelist
+
+@app.route('/uploads,<filename>')
+def get_image(filename):
+    root_dir= os.getcwd()
+    return send_from_directory(os.path.join(root_dir,app.config['UPLOAD_FOLDER']),filename)
 
 ###
 # The functions below should be applicable to all Flask apps.
