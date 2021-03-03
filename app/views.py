@@ -24,7 +24,7 @@ def home():
 @app.route('/about/')
 def about():
     """Render the website's about page."""
-    return render_template('about.html', name="Mary Jane")
+    return render_template('about.html', name="Ashley Perkins")
 
 
 @app.route('/upload', methods=['POST', 'GET'])
@@ -73,6 +73,7 @@ def files():
     if not session.get('logged_in'):
         abort(401)
     filenamelist=get_upload_images()
+    print (filenamelist)
     return render_template('files.html',filesname=filenamelist)
 
 def get_upload_images():
@@ -80,7 +81,7 @@ def get_upload_images():
     for subdir, dirs,files in os.walk(app.config['UPLOAD_FOLDER']):
         for file in files:
             descr,extension= os.path.splitext(file)
-            if extension in ['.jpeg','.png','.jpg']:
+            if extension in ['.png','.jpg']:
                 filenamelist.append(file)
     return filenamelist
 
